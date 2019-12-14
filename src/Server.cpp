@@ -6,6 +6,7 @@
  */
 
 #include "Server.h"
+#include "Utility.h"
 
 #include <stdio.h>
 #include <strings.h>
@@ -15,6 +16,7 @@
 #include <netinet/in.h>
 #include <iostream>
 #include <string.h>
+#include <limits.h>
 
 using namespace std;
 
@@ -22,15 +24,20 @@ using namespace std;
 Server::Server() {
 	// TODO Auto-generated constructor stub
 	port = -1;
+	fileName = new char[PATH_MAX];
 }
 
 Server::~Server() {
 	// TODO Auto-generated destructor stub
+	delete fileName;
 }
 
 void Server::init() {
 	cout << "Starting the server side application" << endl;
+	cout << "Please enter the filename you would like to write to: ";
+	cin >> fileName;
 	cout << "Please enter the port that this server will listen on: ";
+	cin.clear();
 	cin >> port;
 	cout << endl;
 
@@ -40,11 +47,14 @@ void Server::init() {
 
 void Server::runServer() {
     char buffer[10000];
-    char *message = "Hello Client, message received. Here is my singed message: \n";
-    char *signed_message = " Singed Bob(Seller) Date: November 24, 2019.";
+    Utility util = Utility(fileName);
+    const char *message = "Hello Client, message received. Here is my singed message: \n";
+    const char *signed_message = " Signed Bob(Seller) Date: November 24, 2019.";
     char *full_signed_message;
+    char *full_response;
     int listenfd;
     socklen_t len;
+    int response;
     struct sockaddr_in servaddr, cliaddr;
     bzero(&servaddr, sizeof(servaddr));
 
@@ -59,19 +69,27 @@ void Server::runServer() {
 
     //receive messages
     len = sizeof(cliaddr);
-    int n = recvfrom(listenfd, buffer, sizeof(buffer),
+    response = recvfrom(listenfd, buffer, sizeof(buffer),
             0, (struct sockaddr*)&cliaddr,&len); //receive message from client
-    buffer[n] = '\0';
+    if (response == -1) {
+    	cout << "There was an error receiving the message from the client, killing server. Please restart" << endl;
+    	return;
+    }
+//    buffer[response] = 0;
     puts(buffer);
-
-    //Sign message
-    full_signed_message = new char(strlen(message) + strlen(buffer) + strlen(signed_message));
-    strcpy(full_signed_message, message);
-    strcat(full_signed_message, buffer);
+    full_signed_message = new char[strlen(buffer) + strlen(signed_message)];
+    strcpy(full_signed_message, buffer);
     strcat(full_signed_message, signed_message);
+    util.writeFile(full_signed_message);
+    //Sign message
+    full_response = new char[strlen(full_signed_message) + strlen(message)];
 
+    // Build response
+    strcpy(full_response, message);
+    strcat(full_response, full_signed_message);
+    puts(full_response);
     // send confirmation
-    sendto(listenfd, full_signed_message, 1000, 0,
+    sendto(listenfd, full_response, strlen(full_response), 0,
           (struct sockaddr*)&cliaddr, sizeof(cliaddr));
 
 }

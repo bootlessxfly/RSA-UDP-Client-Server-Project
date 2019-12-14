@@ -10,8 +10,16 @@
 
 class Utility {
 public:
-	Utility();
+	Utility(char* inFileName);
 	virtual ~Utility();
+	char* openFile();
+	void writeFile(char* message);
+
+
+private:
+	char *fileName;
 };
+
+void interface();
 
 #endif /* UTILITY_H_ */

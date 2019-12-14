@@ -5,18 +5,24 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/Client.cpp \
+../src/RSA.cpp \
 ../src/RSA_UDP_Client_Server_Project.cpp \
-../src/Server.cpp 
+../src/Server.cpp \
+../src/Utility.cpp 
 
 OBJS += \
 ./src/Client.o \
+./src/RSA.o \
 ./src/RSA_UDP_Client_Server_Project.o \
-./src/Server.o 
+./src/Server.o \
+./src/Utility.o 
 
 CPP_DEPS += \
 ./src/Client.d \
+./src/RSA.d \
 ./src/RSA_UDP_Client_Server_Project.d \
-./src/Server.d 
+./src/Server.d \
+./src/Utility.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

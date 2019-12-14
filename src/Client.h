@@ -19,7 +19,9 @@ public:
 private:
 	int port;
 	char *ip_addr;
+	char *fileName;
 	int runClient();
+
 
 };
 

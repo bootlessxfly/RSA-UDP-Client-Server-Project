@@ -17,6 +17,7 @@ public:
 
 private:
 	int port;
+	char *fileName;
 	void runServer();
 };
 

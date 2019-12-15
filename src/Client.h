@@ -14,14 +14,13 @@ public:
 	virtual ~Client();
 	void init();
 
-
-
 private:
+	int p;
+	int q;
 	int port;
 	char *ip_addr;
 	char *fileName;
 	int runClient();
-
 
 };
 

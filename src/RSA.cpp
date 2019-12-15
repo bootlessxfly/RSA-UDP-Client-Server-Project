@@ -6,13 +6,40 @@
  */
 
 #include "RSA.h"
+#include "Key.h"
 
-RSA::RSA() {
-	// TODO Auto-generated constructor stub
+#include <iostream>
+
+using namespace std;
+
+RSA::RSA(int p, int q) {
+	publicKey = Key(p, q);
+	if (!publicKey.getIsKeyCorrect()) {
+		return;
+	}
+	privateKey = Key(p, q, publicKey.getExponent());
+	if (publicKey.getIsKeyCorrect() && privateKey.getIsKeyCorrect()) {
+		isKeyGenerated = true;
+	}
 
 }
 
 RSA::~RSA() {
 	// TODO Auto-generated destructor stub
+}
+
+void RSA::addServerPubKey(char *pubKey) {
+	otherPubKey = Key(pubKey);
+	if (otherPubKey.getIsKeyCorrect()) {
+		isKeyReceived = true;
+	}
+}
+
+bool RSA::getIsKeyGenerated() {
+	return isKeyGenerated;
+}
+
+bool RSA::getIsKeyReceived() {
+	return isKeyReceived;
 }
 

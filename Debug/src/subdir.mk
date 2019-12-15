@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/Client.cpp \
+../src/Key.cpp \
 ../src/RSA.cpp \
 ../src/RSA_UDP_Client_Server_Project.cpp \
 ../src/Server.cpp \
@@ -12,6 +13,7 @@ CPP_SRCS += \
 
 OBJS += \
 ./src/Client.o \
+./src/Key.o \
 ./src/RSA.o \
 ./src/RSA_UDP_Client_Server_Project.o \
 ./src/Server.o \
@@ -19,6 +21,7 @@ OBJS += \
 
 CPP_DEPS += \
 ./src/Client.d \
+./src/Key.d \
 ./src/RSA.d \
 ./src/RSA_UDP_Client_Server_Project.d \
 ./src/Server.d \

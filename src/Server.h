@@ -16,10 +16,11 @@ public:
 	void init();
 
 private:
+	int p;
+	int q;
 	int port;
 	char *fileName;
-	void runServer();
+	int runServer();
 };
-
 
 #endif /* SERVER_H_ */

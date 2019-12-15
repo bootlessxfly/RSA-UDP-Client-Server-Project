@@ -33,7 +33,8 @@ private:
 	const char *pubKeyForm = ",";
 
 	void buildKey(int p, int q, int e);
-	int findPublicExponent(int p, int q, int z, int n);
+	int findPublicExponent(int z, int n);
+	int findGCD(int e, int z);
 	int findPrivateExponent(int e, int z);
 	void setPublicKeyFromString(char *pubKey);
 

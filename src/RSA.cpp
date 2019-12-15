@@ -28,6 +28,10 @@ RSA::~RSA() {
 	// TODO Auto-generated destructor stub
 }
 
+char* RSA::getPublicKeyString() {
+	return publicKey.getPublicKeyString();
+}
+
 void RSA::addServerPubKey(char *pubKey) {
 	otherPubKey = Key(pubKey);
 	if (otherPubKey.getIsKeyCorrect()) {

@@ -16,6 +16,7 @@ public:
 	virtual ~RSA();
 
 	void addServerPubKey(char *pubKey);
+	char* getPublicKeyString();
 	bool getIsKeyGenerated();
 	bool getIsKeyReceived();
 

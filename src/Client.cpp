@@ -73,6 +73,7 @@ void Client::init() {
 
 int Client::runClient() {
 	RSA rsa = RSA(p,q);
+	char* pubKey;
 	if (!rsa.getIsKeyGenerated()) {
 		cout << "There was an issue generating the keys, check your p and q. Otherwise file a bug." << endl;
 		return -1;
@@ -102,6 +103,42 @@ int Client::runClient() {
 		printf("\n Error : Connect Failed. \n");
 		return -1;
 	}
+
+	// Send the public key to server
+	pubKey = rsa.getPublicKeyString();
+	if (pubKey == 0) {
+		cout << "There was an error building the public key string. This is most likely a bug." << endl;
+		return -1;
+	}
+	response = sendto(sockfd, pubKey, strlen(pubKey) + 1, 0,
+			(struct sockaddr*) NULL, sizeof(servaddr));
+	if (response == -1) {
+		cout << "Unable to send publicKey to server to server" << endl;
+		return -1;
+	}
+	cout << "Public key was sent to the server, waiting for server's public key..." << endl;
+	// Will reuse this variable to receive the servers public key
+	pubKey = new char[sizeof(char) + 2*sizeof(int)];
+	// The key is format is size int + char + int
+	response = recvfrom(sockfd, pubKey, sizeof(pubKey), 0,
+			(struct sockaddr*) NULL, NULL);
+	if (response == -1) {
+		cout << "Unable to retrieve pubKey from the server server." << endl;
+
+		return -1;
+	}
+	pubKey[response] = 0;
+
+	rsa.addServerPubKey(pubKey);
+	if (!rsa.getIsKeyReceived()) {
+		cout << "There was an issue storing the public key. If the public key was not sent in a bad format, this is a bug." << endl;
+		return -1;
+	}
+
+	cout << "Public key received and stored. Public key is: " << pubKey << endl;
+
+
+
 
 	// Send the message
 	response = sendto(sockfd, message, strlen(message) + 1, 0,

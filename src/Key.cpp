@@ -16,6 +16,7 @@
 #include <iterator>
 #include <algorithm>
 #include <string>
+#include <time.h>
 
 using namespace std;
 
@@ -62,6 +63,7 @@ void Key::buildKey(int p, int q, int e) {
 		isKeyCorrect = false;
 		return;
 	}
+	cout << "n is: " << n << endl;
 
 	if (isPrivate) {
 		cout << "Generating the Private Key: " << endl;
@@ -71,39 +73,51 @@ void Key::buildKey(int p, int q, int e) {
 		}
 	} else {
 		cout << "Generating the Public Key: " << endl;
-		exponent = findPublicExponent(p, q, z, n);
+		exponent = findPublicExponent(z, n);
 		if (exponent > -1) {
 			isKeyCorrect = true;
 		}
 	}
 }
 
-int Key::findPublicExponent(int p, int q, int z, int n) {
-	int e = 2; // The lowest number that e could start out with
-	int gcdTemp;
-	int denom1 = e;
-	int denom2 = z;
+int Key::findPublicExponent(int z, int n) {
+//	srand(time(NULL));
+//	// We use a random number to generate the starting point of e. This is to make
+//	// it even harder to guess p and q.
+//	int rando = rand() % (n-1) + 2;
+	int e = 2;
+	int gcd;
 	while (e < n) {
-		denom1 = e;
-		denom2 = z;
-		while (true) {
-			gcdTemp = denom1 % denom2;
-			if (gcdTemp == 0) {
-				break;
-			}
-			denom1 = denom2;
-			denom2 = gcdTemp;
-
-		}
-		if (denom2 == 1) {
+		gcd = findGCD(e, z);
+		if (gcd == 1) {
 			cout << e << endl;
 			return e;
 		} else {
 			e++;
 		}
 	}
+	//findPublicExponent(z, n);
 	cout << "Nothing Found" << endl;
 	return -1;
+}
+
+int Key::findGCD(int e, int z) {
+	int gcd;
+	int denom1 = e;
+	int denom2 = z;
+	while (denom2 != 0) {
+		if (denom1 < denom2) {
+			//reverse the denomerators.
+			gcd = denom1;
+			denom1 = denom2;
+			denom2 = gcd;
+		}
+		gcd = denom2;
+		denom2 = denom1 % denom2;
+		denom1 = gcd;
+
+	}
+	return denom1;
 }
 
 int Key::findPrivateExponent(int z, int e) {

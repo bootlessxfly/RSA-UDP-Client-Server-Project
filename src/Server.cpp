@@ -68,6 +68,7 @@ void Server::init() {
 
 int Server::runServer() {
 	RSA rsa = RSA(p,q);
+	char* pubKey = new char[sizeof(char) + 2*sizeof(int)];
 	if (!rsa.getIsKeyGenerated()) {
 		cout << "There was an issue generating the keys, check your p and q. Otherwise file a bug." << endl;
 		return -1;
@@ -95,11 +96,35 @@ int Server::runServer() {
 	bind(listenfd, (struct sockaddr*) &servaddr, sizeof(servaddr));
 
 	//receive public key
+	len = sizeof(cliaddr);
+	// the size of the public key is 2*int + char. int,int
+	response = recvfrom(listenfd, pubKey, sizeof(pubKey), 0,
+			(struct sockaddr*) &cliaddr, &len); //receive message from client
+	if (response == -1) {
+		cout
+				<< "There was an error receiving the message from the client, killing server. Please restart"
+				<< endl;
+		return -1;
+	}
+	pubKey[response] = 0;
+	rsa.addServerPubKey(pubKey);
+	if (!rsa.getIsKeyReceived()) {
+		cout << "There was an issue storing the public key. If the public key was not sent in a bad format, this is a bug." << endl;
+		return -1;
+	}
+	cout << "The public key was retrieved and save for the client: " << pubKey << endl;
 
 	//send public key
+	//delete pubKey;
+	pubKey = rsa.getPublicKeyString();
+	response = sendto(listenfd, pubKey, strlen(pubKey), 0,
+			(struct sockaddr*) &cliaddr, sizeof(cliaddr));
+	if (response == -1) {
+		cout << "There was an issue sending the public key back to the client" << endl;
+		return -1;
+	}
 
 	//receive messages
-	len = sizeof(cliaddr);
 	response = recvfrom(listenfd, buffer, sizeof(buffer), 0,
 			(struct sockaddr*) &cliaddr, &len); //receive message from client
 	if (response == -1) {
@@ -119,11 +144,10 @@ int Server::runServer() {
 	// Build response
 	strcpy(full_response, message);
 	strcat(full_response, full_signed_message);
-	puts(full_response);
 	// send confirmation
 	response = sendto(listenfd, full_response, strlen(full_response), 0,
 			(struct sockaddr*) &cliaddr, sizeof(cliaddr));
-	if (response = -1) {
+	if (response == -1) {
 		cout << "There was an issue sending the message back to the client" << endl;
 		return -1;
 	}

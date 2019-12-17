@@ -10,12 +10,20 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <string>
+#include <string.h>
+#include <strings.h>
 
 using namespace std;
 
-Utility::Utility(char *inFileName) {
+Utility::Utility() {
+	fileName = new char[1];
+}
+
+Utility::Utility(char *inFileName, int p, int q) {
 	// TODO Auto-generated constructor stub
 	fileName = inFileName;
+	rsa = RSA(p,q);
 }
 
 Utility::~Utility() {
@@ -48,5 +56,61 @@ void Utility::writeFile(char *message) {
 	file.write(message, strlen(message));
 	file.close();
 
+}
+
+bool Utility::valTestMessage(char* mess) {
+	bool pass = true;
+	size_t current, previous = 0;
+	int i = 0;
+	int n;
+	string key = (string) mess;
+	current = key.find(delim);
+	while (current != string::npos) {
+		n = stoi(key.substr(previous, current - previous));
+		previous = current + 1;
+		current = key.find(Utility::delim, previous);
+		n = rsa.decryptInt(n);
+		cout << n << endl;
+		if (n != i) {
+			pass = false;
+		}
+		i++;
+	}
+
+	return pass;
+}
+
+void Utility::addOtherPubKeyToRSA(char* key) {
+	rsa.addServerPubKey(key);
+}
+
+bool Utility::IsKeyCorrect() {
+	return rsa.getIsKeyGenerated();
+}
+
+bool Utility::IsKeyReceived() {
+	return rsa.getIsKeyReceived();
+}
+
+char* Utility::getPubKeyString() {
+	return rsa.getPublicKeyString();
+}
+
+char* Utility::genTestMessage() {
+	char* mess = new char[(128* sizeof(int)) + (128 * sizeof(char))];
+	char* c;
+	for (int i = 0; i < 128; i++) {
+		if (i == 0) {
+			c = rsa.encrypt(i);
+			strcat(c,Utility::delim);
+		}
+		else {
+			strcat(c, rsa.encrypt(i));
+			strcat(c,Utility::delim);
+		}
+//		cout << c << endl;
+	}
+	cout << "The test string is: " << c << endl;
+	return c;
 }
 

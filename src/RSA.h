@@ -12,21 +12,34 @@
 
 class RSA {
 public:
+	RSA();
 	RSA(int p, int q);
+	RSA(int n, int e, int d);
 	virtual ~RSA();
 
 	void addServerPubKey(char *pubKey);
 	char* getPublicKeyString();
 	bool getIsKeyGenerated();
 	bool getIsKeyReceived();
+	char* encrypt(int m);
+	char* decrypt(char* c);
+	int encryptInt(int mNum);
+	int decryptInt(int cNum);
+
+	bool testASCIIEncDec(RSA rsa, RSA rsa1);
 
 private:
-	Key privateKey;
-	Key publicKey;
-	Key otherPubKey;
+	Key key;
+	Key otherKey;
 
-	bool isKeyGenerated = false;
-	bool isKeyReceived = false;
+//	bool isKeyGenerated = false;
+//	bool isKeyReceived = false;
+
+	int testE(int m);
+	int testD(int m);
+
+	bool testASCII(RSA rsa, RSA rsa1);
+
 };
 
 #endif /* RSA_H_ */

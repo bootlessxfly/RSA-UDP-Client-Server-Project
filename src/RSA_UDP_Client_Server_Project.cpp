@@ -8,7 +8,7 @@
 
 #include "Server.h"
 #include "Client.h"
-#include "RSA.h" // for testing, remove
+#include "RSA.h"
 
 #include <iostream>
 
@@ -16,7 +16,10 @@ using namespace std;
 
 void interface();
 
+void test();
+
 int main() {
+	//test();
 	interface();
 
 	return 0;
@@ -43,6 +46,31 @@ void interface() {
 	} else if (option == 2) {
 		//launch client
 		client.init();
+	}
+}
+
+void test() {
+
+	// This ar valid values
+	//RSA rsa = RSA(46,67);
+	//RSA rsa1 = RSA(89,91);
+
+//	RSA rsa = RSA(4,67);
+//	RSA rsa1 = RSA(89,91);
+
+
+	bool pass = false;
+	while (!pass) {
+		cout << "Next" << endl;
+//		RSA rsa = RSA(151,3);
+//		RSA rsa1 = RSA(5,91);
+		RSA rsa = RSA(10,10);
+		RSA rsa1 = RSA(11,13);
+		rsa.addServerPubKey(rsa1.getPublicKeyString());
+		rsa1.addServerPubKey(rsa.getPublicKeyString());
+		cout << "Other pub key: " << rsa1.getPublicKeyString() << endl;
+		cout << "Other pub key2: " << rsa.getPublicKeyString() << endl;
+		pass = rsa.testASCIIEncDec(rsa, rsa1);
 	}
 }
 

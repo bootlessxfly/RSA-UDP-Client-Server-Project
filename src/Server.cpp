@@ -7,7 +7,6 @@
 
 #include "Server.h"
 #include "Utility.h"
-#include "RSA.h"
 
 #include <stdio.h>
 #include <strings.h>
@@ -18,6 +17,7 @@
 #include <iostream>
 #include <string.h>
 #include <limits.h>
+#include <string>
 
 using namespace std;
 
@@ -42,11 +42,11 @@ void Server::init() {
 	cin >> p;
 	cout << "Enter q: ";
 	cin >> q;
-	cout
-			<< "Please keep record of these values if you would like to able to reuse the values"
-			<< endl;
-	cout << "Please enter the filename you would like to write to: ";
-	cin >> fileName;
+//	cout
+//			<< "Please keep record of these values if you would like to able to reuse the values"
+//			<< endl;
+//	cout << "Please enter the filename you would like to write to: ";
+//	cin >> fileName;
 	cout << "Please enter the port that this server will listen on: ";
 	cin.clear();
 	cin >> port;
@@ -66,15 +66,47 @@ void Server::init() {
 
 }
 
+int Server::getPublicKeyExchange(char* pubKey, int listenfd, struct sockaddr_in cliaddr, socklen_t len) {
+		int response = recvfrom(listenfd, pubKey, sizeof(pubKey), 0,
+				(struct sockaddr*) &cliaddr, &len); //receive message from client
+		if (response == -1) {
+			cout
+					<< "There was an error receiving the message from the client, killing server. Please restart"
+					<< endl;
+			return -1;
+		}
+		pubKey[response] = 0;
+		util.addOtherPubKeyToRSA(pubKey);
+		if (!util.IsKeyReceived()) {
+			cout << "There was an issue storing the public key. If the public key was not sent in a bad format, this is a bug." << endl;
+			return -1;
+		}
+		cout << "The public key was retrieved and save for the client: " << pubKey << endl;
+
+		//send public key
+		//delete pubKey;
+		pubKey = util.getPubKeyString();
+		response = sendto(listenfd, pubKey, strlen(pubKey), 0,
+				(struct sockaddr*) &cliaddr, sizeof(cliaddr));
+		if (response == -1) {
+			cout << "There was an issue sending the public key back to the client" << endl;
+			return -1;
+		}
+		return 0;
+}
+
 int Server::runServer() {
-	RSA rsa = RSA(p,q);
+	util = Utility(fileName, p, q);
 	char* pubKey = new char[sizeof(char) + 2*sizeof(int)];
-	if (!rsa.getIsKeyGenerated()) {
+	char* testMess = new char[(128* sizeof(int)) + (128 * sizeof(char))];
+	bool correctReceived;
+	bool correctSent;
+	if (!util.IsKeyCorrect()) {
 		cout << "There was an issue generating the keys, check your p and q. Otherwise file a bug." << endl;
 		return -1;
 	}
 	char buffer[10000];
-	Utility util = Utility(fileName);
+
 	const char *message =
 			"Hello Client, message received. Here is my singed message: \n";
 	const char *signed_message = " Signed Bob(Seller) Date: November 24, 2019.";
@@ -98,31 +130,30 @@ int Server::runServer() {
 	//receive public key
 	len = sizeof(cliaddr);
 	// the size of the public key is 2*int + char. int,int
-	response = recvfrom(listenfd, pubKey, sizeof(pubKey), 0,
-			(struct sockaddr*) &cliaddr, &len); //receive message from client
-	if (response == -1) {
-		cout
-				<< "There was an error receiving the message from the client, killing server. Please restart"
-				<< endl;
-		return -1;
-	}
-	pubKey[response] = 0;
-	rsa.addServerPubKey(pubKey);
-	if (!rsa.getIsKeyReceived()) {
-		cout << "There was an issue storing the public key. If the public key was not sent in a bad format, this is a bug." << endl;
-		return -1;
-	}
-	cout << "The public key was retrieved and save for the client: " << pubKey << endl;
+	response = getPublicKeyExchange(pubKey, listenfd, cliaddr, len);
 
-	//send public key
-	//delete pubKey;
-	pubKey = rsa.getPublicKeyString();
-	response = sendto(listenfd, pubKey, strlen(pubKey), 0,
-			(struct sockaddr*) &cliaddr, sizeof(cliaddr));
-	if (response == -1) {
-		cout << "There was an issue sending the public key back to the client" << endl;
-		return -1;
+	// Validate keys with test message back to Client
+	response = recvfrom(listenfd, testMess, 10000, 0,
+			(struct sockaddr*) &cliaddr, &len); //receive message from client
+	testMess[response] = 0;
+
+	cout << "Test mess is: " << testMess << endl;
+
+	bool correct = util.valTestMessage(testMess);
+	if (correct) {
+		cout << "We passed!!" << endl;
 	}
+	else {
+		cout << "We fail" << endl;
+	}
+	testMess = new char[(128* sizeof(int)) + (128 * sizeof(char))];
+	testMess = util.genTestMessage();
+
+	response = sendto(listenfd, testMess, strlen(testMess), 0,
+			(struct sockaddr*) &cliaddr, sizeof(cliaddr));
+
+	// remove after testing
+	return 0;
 
 	//receive messages
 	response = recvfrom(listenfd, buffer, sizeof(buffer), 0,
@@ -151,6 +182,8 @@ int Server::runServer() {
 		cout << "There was an issue sending the message back to the client" << endl;
 		return -1;
 	}
+
+
 
 	return 0;
 

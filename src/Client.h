@@ -5,6 +5,10 @@
  *      Author: chwhite
  */
 
+#include <sys/socket.h>
+#include "Utility.h"
+
+
 #ifndef CLIENT_H_
 #define CLIENT_H_
 
@@ -17,10 +21,12 @@ public:
 private:
 	int p;
 	int q;
+	Utility util;
 	int port;
 	char *ip_addr;
 	char *fileName;
 	int runClient();
+	int getPublicKeyExchange(int sockfd, socklen_t len);
 
 };
 

@@ -24,6 +24,8 @@ public:
 	bool IsKeyReceived();
 	char* getPubKeyString();
 
+	char* encryptMess(char* mess);
+
 
 
 private:

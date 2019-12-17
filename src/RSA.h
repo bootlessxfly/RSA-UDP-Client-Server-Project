@@ -22,11 +22,13 @@ public:
 	bool getIsKeyGenerated();
 	bool getIsKeyReceived();
 	char* encrypt(int m);
-	char* decrypt(char* c);
+	char* decrypt(int n);
 	int encryptInt(int mNum);
 	int decryptInt(int cNum);
 
 	bool testASCIIEncDec(RSA rsa, RSA rsa1);
+
+	bool checkIfSame();
 
 private:
 	Key key;

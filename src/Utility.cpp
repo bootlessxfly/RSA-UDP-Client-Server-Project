@@ -114,3 +114,15 @@ char* Utility::genTestMessage() {
 	return c;
 }
 
+char* Utility::encryptMess(char* mess) {
+	char* message = new char[strlen(mess) * 4];
+	char* c;
+	int cm;
+	for (int i = 0; i < strlen(mess) ; i++) {
+		cm = mess[i];
+
+	}
+
+	return message;
+}
+

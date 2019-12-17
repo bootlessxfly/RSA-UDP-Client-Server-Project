@@ -20,7 +20,7 @@ RSA::RSA() {
 }
 
 RSA::RSA(int p, int q) {
-	srand(time(NULL));
+	//srand(time(NULL));
 	key = Key(p, q);
 	if (!key.getIsKeyCorrect()) {
 		return;
@@ -29,6 +29,7 @@ RSA::RSA(int p, int q) {
 }
 
 RSA::RSA(int n, int e, int d) {
+	//srand(time(NULL));
 	key = Key(n, e, d);
 }
 
@@ -43,25 +44,31 @@ char* RSA::encrypt(int m) {
 	return mess;
 }
 
-char* RSA::decrypt(char* c) {
+char* RSA::decrypt(int c) {
+
 	return 0;
 }
 
 
-
+bool RSA::checkIfSame() {
+	if (key.getN() == otherKey.getN() && key.getE() == otherKey.getE()) {
+		return true;
+	}
+	return false;
+}
 
 int RSA::testE(int m) {
 	int test = m;
-	cout << "Initial Message: " << test << endl;
+//	cout << "Initial Message: " << test << endl;
 	test = encryptInt(test);
-	cout << "Generated Cipher is: " << test << endl;
+//	cout << "Generated Cipher is: " << test << endl;
 	return test;
 }
 
 int RSA::testD(int m) {
 //	cout << "Cipher is: " << m << endl;
 	int n = decryptInt(m);
-	cout << "Message is: " << n << endl;
+//	cout << "Message is: " << n << endl;
 	return n;
 }
 
@@ -112,11 +119,11 @@ bool RSA::testASCII(RSA rsa, RSA rsa1) {
 		int m = rsa.testE(i);
 		int n = rsa1.testD(m);
 		if (i == n) {
-			cout << i << " has passed" << endl;
+//			cout << i << " has passed" << endl;
 		}
 		else {
 			passed = false;
-			cout << i << " has FAILED" << endl;
+//			cout << i << " has FAILED" << endl;
 		}
 	}
 
@@ -124,11 +131,11 @@ bool RSA::testASCII(RSA rsa, RSA rsa1) {
 		int m = rsa1.testE(i);
 		int n = rsa.testD(m);
 		if (i == n) {
-			cout << i << " reversed has passed" << endl;
+//			cout << i << " reversed has passed" << endl;
 		}
 		else {
 			passed = false;
-			cout << i << " reversed FAILED" << endl;
+//			cout << i << " reversed FAILED" << endl;
 		}
 	}
 	return passed;

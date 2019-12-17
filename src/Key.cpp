@@ -72,7 +72,7 @@ Key::~Key() {
 }
 
 void Key::buildKey() {
-
+	//srand(time(NULL));
 	if (p == 0 || q == 0) {
 		return;
 	}
@@ -97,21 +97,20 @@ void Key::buildKey() {
 int Key::findPublicExponent(int z, int n) {
 	// The possible choices to start e from are the 1st 4 ferment numbers
 	int exponents[5] = {3, 5, 17, 257, 655537};
-//	srand(time(NULL));
-//	int rando = rand() % 5 + 0;
-//	int forceIterator = rand() % 2 + 0;
-//	int e = exponents[rando];
-//	if (forceIterator > 0) {
-//		// adds even more randomness
-//		e++;
-//	}
-//	if (e > z) {
-//		while (e > z) {
-//			rando = rand() % 4 + 0;
-//			e = exponents[rando];
-//		}
-//	}
-	int e = 2;
+	int rando = rand() % 5 + 0;
+	int forceIterator = rand() % 2 + 0;
+	int e = exponents[rando];
+	if (forceIterator > 0) {
+		// adds even more randomness
+		e++;
+	}
+	if (e > z) {
+		while (e > z) {
+			rando = rand() % 4 + 0;
+			e = exponents[rando];
+		}
+	}
+	//int e = 2;
 	int gcd;
 	while (e < z) {
 		gcd = findGCD(e, z);
@@ -247,36 +246,25 @@ bool Key::validateKey(int n, int e, int d) {
 }
 
 void Key::generatePQ() {
-//	srand(time(NULL));
 	p = genRanNumPrime();
 	q = genRanNumPrime();
 	// This should be incredibly rare, but incase it does happen, we will regenerate the nums
 	if (p == q) {
-		generatePQ();
+		return generatePQ();
+	}
+	if (p <= 2 || q <= 2) {
+		return generatePQ();
 	}
 
 }
 
 int Key::genRanNumPrime() {
-	int count = 0;
-	int num = rand() % 256 + 2;
-	int m = num / 2;
-	// Check if its a prime number
-	for (int i = 2; i < m; i++) {
-		int r = num % i;
-		if (r == 0) {
-			// Not a prime number, regenerate;
-			//num = rand() % 512 + 2;
-			num = num + 2;
-
-			i = 2;
-			m = num / 2;
-		}
-//		if (count > 11 ) {
-//			return genRanNumPrime();
-//		}
-//		count++;
+	int upperLimit = 128;
+	int range = rand() % upperLimit + upperLimit/2;
+	for (int i = 0; i < 4; i++) {
+		range = rand() % range + upperLimit/2;
 	}
+	int num = rand() % range + 0;
 	return num;
 }
 

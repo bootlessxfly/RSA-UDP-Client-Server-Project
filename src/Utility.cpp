@@ -120,7 +120,16 @@ char* Utility::encryptMess(char* mess) {
 	int cm;
 	for (int i = 0; i < strlen(mess) ; i++) {
 		cm = mess[i];
-
+		c = rsa.encrypt(cm);
+		if (i == 0) {
+			strcpy(message, c);
+			strcat(message, delim);
+		}
+		else {
+			strcat(message, c);
+			// add something to keep this from adding delim at end
+			strcat(message, delim);
+		}
 	}
 
 	return message;

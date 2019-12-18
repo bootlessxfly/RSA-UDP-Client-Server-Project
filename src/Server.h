@@ -27,7 +27,10 @@ private:
 	int runServer();
 	Utility util;
 
-	int getPublicKeyExchange(char* pubKey, int listenfd,struct sockaddr_in cliaddr, socklen_t len);
+	bool validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t len);
+
+	int getPublicKeyExchange(int listenfd,struct sockaddr_in cliaddr, socklen_t len);
+	int exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t len);
 };
 
 #endif /* SERVER_H_ */

@@ -20,8 +20,8 @@ void test();
 
 int main() {
 	srand(time(NULL));
-	test();
-	//interface();
+	//test();
+	interface();
 
 	return 0;
 }

@@ -26,7 +26,11 @@ private:
 	char *ip_addr;
 	char *fileName;
 	int runClient();
+
+	bool validateKeys(int sockfd, socklen_t len);
+
 	int getPublicKeyExchange(int sockfd, socklen_t len);
+	int exchangeMessages(int sockfd, socklen_t len);
 
 };
 

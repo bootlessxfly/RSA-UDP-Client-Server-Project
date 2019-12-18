@@ -19,17 +19,20 @@ public:
 	void init();
 
 private:
-	int p;
-	int q;
+	int passCount = 0;
+	int p = 0;
+	int q = 0;
 	Utility util;
 	int port;
 	char *ip_addr;
 	char *fileName;
 	int runClient();
 
+	bool fullKeyGeneration(int sockfd, socklen_t len);
+
 	bool validateKeys(int sockfd, socklen_t len);
 
-	int getPublicKeyExchange(int sockfd, socklen_t len);
+	int getPublicKeyExchange(int sockfd, socklen_t len, bool regenKey);
 	int exchangeMessages(int sockfd, socklen_t len);
 
 };

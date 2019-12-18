@@ -12,6 +12,9 @@
 
 class Utility {
 public:
+
+	constexpr static char* badKey = "!";
+
 	Utility();
 	Utility(char *inFileName, int p, int q);
 	virtual ~Utility();
@@ -24,7 +27,11 @@ public:
 	bool IsKeyReceived();
 	char* getPubKeyString();
 
+	bool checkSameKey();
+
 	char* encryptMess(char* mess);
+
+	void printKeys();
 
 
 

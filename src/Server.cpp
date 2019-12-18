@@ -25,8 +25,6 @@ Server::Server() {
 	// TODO Auto-generated constructor stub
 	port = -1;
 	fileName = new char[PATH_MAX];
-	p = 0;
-	q = 0;
 }
 
 Server::~Server() {
@@ -36,17 +34,17 @@ Server::~Server() {
 
 void Server::init() {
 	cout << "Starting the server side application" << endl;
-	cout << "Please enter the information for generating the key pair below: "
-			<< endl;
-	cout << "Enter p: ";
-	cin >> p;
-	cout << "Enter q: ";
-	cin >> q;
-	cout
-			<< "Please keep record of these values if you would like to able to reuse the values"
-			<< endl;
-	cout << "Please enter the filename you would like to write to: ";
-	cin >> fileName;
+//	cout << "Please enter the information for generating the key pair below: "
+//			<< endl;
+//	cout << "Enter p: ";
+//	cin >> p;
+//	cout << "Enter q: ";
+//	cin >> q;
+//	cout
+//			<< "Please keep record of these values if you would like to able to reuse the values"
+//			<< endl;
+//	cout << "Please enter the filename you would like to write to: ";
+//	cin >> fileName;
 	cout << "Please enter the port that this server will listen on: ";
 	cin.clear();
 	cin >> port;
@@ -66,7 +64,21 @@ void Server::init() {
 
 }
 
+bool Server::fullKeyGeneration(int listenfd, struct sockaddr_in cliaddr, socklen_t len) {
+
+//	if (validateKeys(listenfd, cliaddr, len)) {
+//		return true;
+//	}
+//	else {
+//		return false;
+//	}
+
+	return false;
+
+}
+
 bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t len) {
+	bool otherPassed = false;
 	bool isCorrect = false;
 	char* testMess = new char[(128* sizeof(int)) + (128 * sizeof(char))];
 	int response;
@@ -74,31 +86,80 @@ bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t le
 			(struct sockaddr*) &cliaddr, &len); //receive message from client
 	testMess[response] = 0;
 
-	cout << "Test mess is: " << testMess << endl;
+//	cout << "Test mess is: " << testMess << endl;
+
+
+
+
 
 	if (util.valTestMessage(testMess)) {
-		cout << "We passed!!" << endl;
+//		cout << "!!! WE PASSED !!!" << endl;
 		//return true;
 		isCorrect = true;
 	}
 	else {
-		cout << "We fail" << endl;
+//		cout << "!!! WE FAIL !!!" << endl;
+		response = sendto(listenfd, Utility::badKey, strlen(Utility::badKey), 0,
+				(struct sockaddr*) &cliaddr, sizeof(cliaddr));
+		response = getPublicKeyExchange(listenfd, cliaddr, len, true);
 		return false;
 	}
+
+
+
 	testMess = new char[(128* sizeof(int)) + (128 * sizeof(char))];
 	testMess = util.genTestMessage();
 
 	response = sendto(listenfd, testMess, strlen(testMess), 0,
 			(struct sockaddr*) &cliaddr, sizeof(cliaddr));
 
+
+
+	// wait for response
+	testMess = new char[(128* sizeof(int)) + (128 * sizeof(char))];
+	response = recvfrom(listenfd, testMess, 10000, 0,
+			(struct sockaddr*) &cliaddr, &len); //receive message from client
+	if (response == -1) {
+		cout << "SOmething went wrong" << endl;
+		return false;
+	}
+
+
+	testMess[response] = 0;
+
+	if (testMess[0] == Utility::badKey[0]) {
+//		cout << "Otherside has a bad key" << endl;
+		util = Utility(fileName, 0, 0);
+		response = sendto(listenfd, Utility::badKey, strlen(Utility::badKey), 0,
+				(struct sockaddr*) &cliaddr, sizeof(cliaddr));
+		getPublicKeyExchange(listenfd, cliaddr, len, false);
+		return false;
+	}
+	else {
+		otherPassed = true;
+	}
+	if (otherPassed && isCorrect) {
+		if (util.checkSameKey()) {
+			response = sendto(listenfd, Utility::badKey, strlen(Utility::badKey), 0,
+					(struct sockaddr*) &cliaddr, sizeof(cliaddr));
+			response = getPublicKeyExchange(listenfd, cliaddr, len, true);
+			return false;
+		}
+		cout << "Got the ACK from the client" << endl;
+		return true;
+	}
+
 	return isCorrect;
 
 }
 
-int Server::getPublicKeyExchange(int listenfd, struct sockaddr_in cliaddr, socklen_t len) {
+int Server::getPublicKeyExchange(int listenfd, struct sockaddr_in cliaddr, socklen_t len, bool regenKey) {
 	char* pubKey = new char[sizeof(char) + 2*sizeof(int)];
 	int response = recvfrom(listenfd, pubKey, sizeof(pubKey), 0,
 				(struct sockaddr*) &cliaddr, &len); //receive message from client
+	if (regenKey) {
+		util = Utility(fileName, 0, 0);
+	}
 	if (response == -1) {
 		cout
 				<< "There was an error receiving the message from the client, killing server. Please restart"
@@ -111,9 +172,8 @@ int Server::getPublicKeyExchange(int listenfd, struct sockaddr_in cliaddr, sockl
 		cout << "There was an issue storing the public key. If the public key was not sent in a bad format, this is a bug." << endl;
 		return -1;
 	}
-	cout << "The public key was retrieved and save for the client: " << pubKey << endl;
+//	cout << "The public key was retrieved and save for the client: " << pubKey << endl;
 	//send public key
-	//delete pubKey;
 	pubKey = util.getPubKeyString();
 	response = sendto(listenfd, pubKey, strlen(pubKey), 0,
 			(struct sockaddr*) &cliaddr, sizeof(cliaddr));
@@ -121,6 +181,7 @@ int Server::getPublicKeyExchange(int listenfd, struct sockaddr_in cliaddr, sockl
 		cout << "There was an issue sending the public key back to the client" << endl;
 		return -1;
 	}
+//	cout << "The Public key was sent to the client" << endl;
 	return 0;
 }
 
@@ -136,6 +197,7 @@ int Server::exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t
 
 	response = recvfrom(listenfd, buffer, sizeof(buffer), 0,
 			(struct sockaddr*) &cliaddr, &len); //receive message from client
+
 	if (response == -1) {
 		cout
 				<< "There was an error receiving the message from the client, killing server. Please restart"
@@ -164,6 +226,7 @@ int Server::exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t
 }
 
 int Server::runServer() {
+	cout << "Server is started ... " << endl;
 	util = Utility(fileName, p, q);
 	if (!util.IsKeyCorrect()) {
 		cout << "There was an issue generating the keys, check your p and q. Otherwise file a bug." << endl;
@@ -187,15 +250,19 @@ int Server::runServer() {
 	//receive public key
 	len = sizeof(cliaddr);
 	// the size of the public key is 2*int + char. int,int
-	response = getPublicKeyExchange(listenfd, cliaddr, len);
 
+	bool isGenerated = false;
 
+	response = getPublicKeyExchange(listenfd, cliaddr, len, false);
 
-	// Validate keys with test message back to Client
-	validateKeys(listenfd, cliaddr, len);
+	cout << "Generating Keys, validating that work, and the sending them to client" << endl;
+	while(!isGenerated) {
+		isGenerated = validateKeys(listenfd, cliaddr, len);
+	}
 
-	//receive messages
-	response = exchangeMessages(listenfd, cliaddr, len);
+	util.printKeys();
+//	//receive messages
+	//response = exchangeMessages(listenfd, cliaddr, len);
 
 
 

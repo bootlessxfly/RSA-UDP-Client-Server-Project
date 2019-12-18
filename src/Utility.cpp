@@ -58,25 +58,31 @@ void Utility::writeFile(char *message) {
 
 }
 
+bool Utility::checkSameKey() {
+	return rsa.checkIfSame();
+}
+
 bool Utility::valTestMessage(char* mess) {
+	if (mess[0] == badKey[0]) {
+		return false;
+	}
 	bool pass = true;
 	size_t current, previous = 0;
 	int i = 0;
 	int n;
-	string key = (string) mess;
+	string key(mess);
 	current = key.find(delim);
 	while (current != string::npos) {
 		n = stoi(key.substr(previous, current - previous));
 		previous = current + 1;
 		current = key.find(Utility::delim, previous);
 		n = rsa.decryptInt(n);
-		cout << n << endl;
+//		cout << n << endl;
 		if (n != i) {
 			pass = false;
 		}
 		i++;
 	}
-
 	return pass;
 }
 
@@ -96,22 +102,27 @@ char* Utility::getPubKeyString() {
 	return rsa.getPublicKeyString();
 }
 
+void Utility::printKeys() {
+	rsa.printKeys();
+}
+
 char* Utility::genTestMessage() {
 	char* mess = new char[(128* sizeof(int)) + (128 * sizeof(char))];
 	char* c;
 	for (int i = 0; i < 128; i++) {
 		if (i == 0) {
 			c = rsa.encrypt(i);
-			strcat(c,Utility::delim);
+			strcpy(mess, c);
+			strcat(mess,Utility::delim);
 		}
 		else {
-			strcat(c, rsa.encrypt(i));
-			strcat(c,Utility::delim);
+			strcat(mess, rsa.encrypt(i));
+			strcat(mess,Utility::delim);
 		}
 //		cout << c << endl;
 	}
-	cout << "The test string is: " << c << endl;
-	return c;
+//	cout << "The test string is: " << c << endl;
+	return mess;
 }
 
 char* Utility::encryptMess(char* mess) {

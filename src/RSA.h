@@ -30,12 +30,12 @@ public:
 
 	bool checkIfSame();
 
+	void printKeys();
+	void printKeysAndPQ();
+
 private:
 	Key key;
 	Key otherKey;
-
-//	bool isKeyGenerated = false;
-//	bool isKeyReceived = false;
 
 	int testE(int m);
 	int testD(int m);

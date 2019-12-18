@@ -20,7 +20,6 @@ void test();
 
 int main() {
 	srand(time(NULL));
-	//test();
 	interface();
 
 	return 0;
@@ -35,6 +34,7 @@ void interface() {
 					"\n Please enter one of the following options"
 					"\n\t1: To launch as server"
 					"\n\t2: If you want to communicate with another server as the client"
+					"\n\t3: Generate the perfect Match!!"
 					"\n\tEnter your option: ";
 	cin >> option;
 
@@ -47,6 +47,9 @@ void interface() {
 	} else if (option == 2) {
 		//launch client
 		client.init();
+	}
+	else if (option == 3) {
+		test();
 	}
 }
 
@@ -61,12 +64,15 @@ void test() {
 
 
 	bool pass = false;
+	RSA rsa;
+	RSA rsa1;
+	cout << "!!!Generating Perfect Match!!! ... Could take a while" << endl;
 	while (!pass) {
-		cout << "\n!!!Next!!!" << endl;
+
 //		RSA rsa = RSA(151,3);
 //		RSA rsa1 = RSA(5,91);
-		RSA rsa = RSA(0,0);
-		RSA rsa1 = RSA(0,0);
+		rsa = RSA(0,0);
+		rsa1 = RSA(0,0);
 		rsa.addServerPubKey(rsa1.getPublicKeyString());
 		if (rsa.checkIfSame()) {
 			continue;
@@ -76,9 +82,12 @@ void test() {
 
 			continue;
 		}
-		cout << "Other pub key: " << rsa1.getPublicKeyString() << endl;
-		cout << "Other pub key2: " << rsa.getPublicKeyString() << endl;
 		pass = rsa.testASCIIEncDec(rsa, rsa1);
 	}
+
+	rsa.printKeysAndPQ();
+	rsa1.printKeysAndPQ();
+
+
 }
 

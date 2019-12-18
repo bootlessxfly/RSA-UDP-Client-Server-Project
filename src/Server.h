@@ -20,16 +20,18 @@ public:
 	void init();
 
 private:
-	int p;
-	int q;
+	int p = 0;
+	int q = 0;
 	int port;
 	char *fileName;
 	int runServer();
 	Utility util;
 
+	bool fullKeyGeneration(int listenfd, struct sockaddr_in cliaddr, socklen_t len);
+
 	bool validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t len);
 
-	int getPublicKeyExchange(int listenfd,struct sockaddr_in cliaddr, socklen_t len);
+	int getPublicKeyExchange(int listenfd,struct sockaddr_in cliaddr, socklen_t len, bool regKey);
 	int exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t len);
 };
 

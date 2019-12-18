@@ -57,6 +57,16 @@ bool RSA::checkIfSame() {
 	return false;
 }
 
+void RSA::printKeys() {
+	key.printKeys();
+	cout << "The other person public key is: " << otherKey.getPublicKeyString() << endl;
+}
+
+void RSA::printKeysAndPQ() {
+	key.printKeysAndPQ();
+	cout << "The other person public key is: " << otherKey.getPublicKeyString() << endl;
+}
+
 int RSA::testE(int m) {
 	int test = m;
 //	cout << "Initial Message: " << test << endl;
@@ -104,11 +114,11 @@ void RSA::addServerPubKey(char *pubKey) {
 
 bool RSA::testASCIIEncDec(RSA rsa, RSA rsa1) {
 	if (testASCII(rsa, rsa1)) {
-		cout << "PASSED!!" << endl;
+//		cout << "PASSED!!" << endl;
 		return true;
 	}
 	else {
-		cout << "FAIL!!" << endl;
+//		cout << "FAIL!!" << endl;
 		return false;
 	}
 }

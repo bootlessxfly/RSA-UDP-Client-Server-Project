@@ -35,7 +35,7 @@ Key::Key(int inN, int inE, int inD) {
 
 	isKeyCorrect = validateKey(n, e, d);
 	if (!isKeyCorrect) {
-		cout << "The keys you provided where no good. No worries, I got a solution..." << endl;
+//		cout << "The keys you provided where no good. No worries, I got a solution..." << endl;
 		while(!isKeyCorrect) {
 			generatePQ();
 			buildKey();
@@ -51,7 +51,7 @@ Key::Key(int inP, int inQ) {
 	q = inQ;
 	buildKey();
 	if (!isKeyCorrect) {
-		cout << "Looks like your key is no good. Let me generate you the perfect set of keys. This could take quite some time ... " << endl;
+//		cout << "Looks like your key is no good. Let me generate you the perfect set of keys. This could take quite some time ... " << endl;
 	}
 	else {
 		cout << "Great!! You provided me with a valid p and q" << endl;
@@ -86,31 +86,31 @@ void Key::buildKey() {
 	d = findPrivateExponent(z, e);
 
 	isKeyCorrect = validateKey(n, e, d);
-	if (isKeyCorrect) {
-		cout << "The value used for p: " << p << endl;
-		cout << "The value used for q: " << q << endl;
-		cout << "The private key is: " << getPrivateKeyString() << endl;
-		cout << "The public key e generated is: " << getPublicKeyString() << endl;
-	}
+//	if (isKeyCorrect) {
+//		cout << "The value used for p: " << p << endl;
+//		cout << "The value used for q: " << q << endl;
+//		cout << "The private key is: " << getPrivateKeyString() << endl;
+//		cout << "The public key e generated is: " << getPublicKeyString() << endl;
+//	}
 }
 
 int Key::findPublicExponent(int z, int n) {
 	// The possible choices to start e from are the 1st 4 ferment numbers
-//	int exponents[5] = {3, 5, 17, 257, 655537};
-//	int rando = rand() % 5 + 0;
-//	int forceIterator = rand() % 2 + 0;
-//	int e = exponents[rando];
-//	if (forceIterator > 0) {
-//		// adds even more randomness
-//		e++;
-//	}
-//	if (e > z) {
-//		while (e > z) {
-//			rando = rand() % 4 + 0;
-//			e = exponents[rando];
-//		}
-//	}
-	int e = 2;
+	int exponents[5] = {3, 5, 17, 257, 655537};
+	int rando = rand() % 5 + 0;
+	int forceIterator = rand() % 2 + 0;
+	int e = exponents[rando];
+	if (forceIterator > 0) {
+		// adds even more randomness
+		e++;
+	}
+	if (e > z) {
+		while (e > z) {
+			rando = rand() % 4 + 0;
+			e = exponents[rando];
+		}
+	}
+//	int e = 2;
 	int gcd;
 	while (e < z) {
 		gcd = findGCD(e, z);
@@ -187,12 +187,12 @@ char* Key::getPublicKeyString() {
 	char *pubKey;
 	sprintf(nStr, "%d", n);
 	sprintf(eStr, "%d", e);
-	pubKey = new char[strlen(nStr) + strlen(eStr) + strlen(pubKeyForm)];
+	pubKey = new char[strlen(nStr) + strlen(eStr) + strlen(pubKeyForm) + 1];
 	strcpy(pubKey, nStr);
 	strcat(pubKey, pubKeyForm);
 	strcat(pubKey, eStr);
-	delete nStr;
-	delete eStr;
+//	delete nStr;
+//	delete eStr;
 	return pubKey;
 }
 
@@ -227,6 +227,17 @@ bool Key::getIsKeyCorrect() {
 	return isKeyCorrect;
 }
 
+void Key::printKeys() {
+	cout << "Your generated Public key is: " << getPublicKeyString() << endl;
+	cout << "Your generated Private key is: " << getPrivateKeyString() << endl;
+}
+
+void Key::printKeysAndPQ() {
+	cout << "The generated p is: " << p << endl;
+	cout << "The generated q is: " << q << endl;
+	printKeys();
+}
+
 bool Key::validateKey(int n, int e, int d) {
 	int m;
 	int c;
@@ -259,9 +270,9 @@ void Key::generatePQ() {
 }
 
 int Key::genRanNumPrime() {
-	int upperLimit = 128;
+	int upperLimit = 78;
 	int range = rand() % upperLimit + upperLimit/2;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 0; i++) {
 		range = rand() % range + upperLimit/2;
 	}
 	int num = rand() % range + 0;

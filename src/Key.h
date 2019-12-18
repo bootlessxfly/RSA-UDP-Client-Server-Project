@@ -24,6 +24,10 @@ public:
 	bool getIsKeyCorrect();
 	char* getPublicKeyString();
 
+	void printKeys();
+
+	void printKeysAndPQ();
+
 private:
 	bool isKeyCorrect = false;
 

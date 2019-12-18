@@ -33,6 +33,9 @@ Utility::~Utility() {
 }
 
 char* Utility::openFile() {
+	char* filePathName = new char[strlen(fileName) + 10];
+	strcpy(filePathName, "contracts/");
+	strcat(filePathName, fileName);
 	char *message;
 	string line;
 	string lineBuffer = "";
@@ -53,6 +56,7 @@ char* Utility::openFile() {
 
 void Utility::writeFile(char *message, bool isSigned, bool isEncrypted) {
 	char* extraFileName = new char[strlen(fileName) + 11];
+	char* filePathName = new char[strlen(fileName) + 22];
 	if (isSigned && !isEncrypted) {
 		//Start message with "signed"
 		strcpy(extraFileName,"signed.");
@@ -67,16 +71,21 @@ void Utility::writeFile(char *message, bool isSigned, bool isEncrypted) {
 		strcat(extraFileName, fileName);
 		strcat(extraFileName, ".enc");
 	}
+
 	if (isSigned || isEncrypted) {
-		ofstream file(extraFileName);
-		file.write(message, strlen(message));
-		file.close();
+		strcpy(filePathName, "contracts/");
+		strcat(filePathName, extraFileName);
+
 	}
 	else {
-		ofstream file(fileName);
-		file.write(message, strlen(message));
-		file.close();
+		strcpy(filePathName, "contracts/");
+		strcat(filePathName, fileName);
+
 	}
+	ofstream file(filePathName);
+	file.write(message, strlen(message));
+	file.close();
+	delete[] filePathName;
 	delete[] extraFileName;
 
 

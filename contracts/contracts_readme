@@ -1,0 +1,6 @@
+This file goes over the format of the contracts.
+name.txt: This is the name that you provided to the program. This represents the unsigned and unencrypted message. 
+name.txt.enc: The is the Encrypted but unsigned message
+signed.name.txt: This is the signed but unencrypted contract
+signed.name.txt.enc: This is the signed and encrypted contrat
+** Please note that this example folder contains both the server and client files since my test is running on the same host

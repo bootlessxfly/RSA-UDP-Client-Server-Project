@@ -80,9 +80,9 @@ bool Server::fullKeyGeneration(int listenfd, struct sockaddr_in cliaddr, socklen
 bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t len) {
 	bool otherPassed = false;
 	bool isCorrect = false;
-	char* testMess = new char[(128* sizeof(int)) + (128 * sizeof(char))];
+	char* testMess = new char[1000000];
 	int response;
-	response = recvfrom(listenfd, testMess, 10000, 0,
+	response = recvfrom(listenfd, testMess, 1000000, 0,
 			(struct sockaddr*) &cliaddr, &len); //receive message from client
 	testMess[response] = 0;
 
@@ -99,7 +99,7 @@ bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t le
 	}
 	else {
 //		cout << "!!! WE FAIL !!!" << endl;
-		response = sendto(listenfd, Utility::badKey, strlen(Utility::badKey), 0,
+		response = sendto(listenfd, util.badKey, strlen(util.badKey), 0,
 				(struct sockaddr*) &cliaddr, sizeof(cliaddr));
 		response = getPublicKeyExchange(listenfd, cliaddr, len, true);
 		return false;
@@ -116,8 +116,8 @@ bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t le
 
 
 	// wait for response
-	testMess = new char[(128* sizeof(int)) + (128 * sizeof(char))];
-	response = recvfrom(listenfd, testMess, 10000, 0,
+	testMess = new char[1000000];
+	response = recvfrom(listenfd, testMess, 1000000, 0,
 			(struct sockaddr*) &cliaddr, &len); //receive message from client
 	if (response == -1) {
 		cout << "SOmething went wrong" << endl;
@@ -127,10 +127,10 @@ bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t le
 
 	testMess[response] = 0;
 
-	if (testMess[0] == Utility::badKey[0]) {
+	if (strcmp(testMess, util.badKey) == 0) {
 //		cout << "Otherside has a bad key" << endl;
 		util = Utility(fileName, 0, 0);
-		response = sendto(listenfd, Utility::badKey, strlen(Utility::badKey), 0,
+		response = sendto(listenfd, util.badKey, strlen(util.badKey), 0,
 				(struct sockaddr*) &cliaddr, sizeof(cliaddr));
 		getPublicKeyExchange(listenfd, cliaddr, len, false);
 		return false;
@@ -140,7 +140,7 @@ bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t le
 	}
 	if (otherPassed && isCorrect) {
 		if (util.checkSameKey()) {
-			response = sendto(listenfd, Utility::badKey, strlen(Utility::badKey), 0,
+			response = sendto(listenfd, util.badKey, strlen(util.badKey), 0,
 					(struct sockaddr*) &cliaddr, sizeof(cliaddr));
 			response = getPublicKeyExchange(listenfd, cliaddr, len, true);
 			return false;

@@ -102,7 +102,7 @@ bool Client::validateKeys(int sockfd, socklen_t len) {
 
 	testMess[response] = 0;
 
-	if (testMess[0] == Utility::badKey[0]) {
+	if (strcmp(testMess, util.badKey) == 0) {
 //		cout << "Other side has a bad key!!" << endl;
 		getPublicKeyExchange(sockfd, len, true);
 		return false;
@@ -112,7 +112,7 @@ bool Client::validateKeys(int sockfd, socklen_t len) {
 //		cout << "!!! WE PASS !!!" << endl;
 		if (testMess[strlen(testMess) - 1] == ':') {
 			if (util.checkSameKey()) {
-				response = sendto(sockfd, Utility::badKey, strlen(Utility::badKey), 0,
+				response = sendto(sockfd, util.badKey, strlen(util.badKey), 0,
 						(struct sockaddr*) NULL, len);
 				if (response == -1) {
 					cout << "Error sending we NACK to server" << endl;
@@ -137,7 +137,7 @@ bool Client::validateKeys(int sockfd, socklen_t len) {
 	}
 	else {
 //		cout << "!!! WE FAIL !!!" << endl;
-		response = sendto(sockfd, Utility::badKey, strlen(Utility::badKey), 0,
+		response = sendto(sockfd, util.badKey, strlen(util.badKey), 0,
 				(struct sockaddr*) NULL, len);
 		if (response == -1) {
 			cout << "Error sending we NACK to server" << endl;

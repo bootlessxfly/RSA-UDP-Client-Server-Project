@@ -13,7 +13,7 @@
 class Utility {
 public:
 
-	constexpr static char* badKey = "!";
+	const char* badKey = "!";
 
 	Utility();
 	Utility(char *inFileName, int p, int q);

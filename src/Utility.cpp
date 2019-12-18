@@ -159,10 +159,10 @@ char* Utility::genTestMessage() {
 }
 
 char* Utility::encryptMess(char* mess) {
-	char* message = new char[strlen(mess) * 4];
+	char* message = new char[strlen(mess) + 10000];
 	char* c;
 	int cm;
-	for (int i = 0; i < strlen(mess) ; i++) {
+	for (int i = 0; i < (int) strlen(mess) ; i++) {
 		cm = mess[i];
 		c = rsa.encrypt(cm);
 		if (i == 0) {

@@ -40,11 +40,11 @@ void Server::init() {
 //	cin >> p;
 //	cout << "Enter q: ";
 //	cin >> q;
-//	cout
-//			<< "Please keep record of these values if you would like to able to reuse the values"
-//			<< endl;
-//	cout << "Please enter the filename you would like to write to: ";
-//	cin >> fileName;
+	cout
+			<< "Please keep record of these values if you would like to able to reuse the values"
+			<< endl;
+	cout << "Please enter the filename you would like to write to: ";
+	cin >> fileName;
 	cout << "Please enter the port that this server will listen on: ";
 	cin.clear();
 	cin >> port;
@@ -187,11 +187,12 @@ int Server::getPublicKeyExchange(int listenfd, struct sockaddr_in cliaddr, sockl
 
 int Server::exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t len) {
 	int response;
-	const char *message =
-			"Hello Client, message received. Here is my singed message: \n";
+//	const char *message =
+//			"Hello Client, message received. Here is my singed message: \n";
 	const char *signed_message = " Signed Bob(Seller) Date: November 24, 2019.";
 	char *full_signed_message;
 	char *full_response;
+	char* message;
 
 	char buffer[10000];
 
@@ -204,19 +205,30 @@ int Server::exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t
 				<< endl;
 		return -1;
 	}
-	puts(buffer);
-	full_signed_message = new char[strlen(buffer) + strlen(signed_message)];
-	strcpy(full_signed_message, buffer);
+	buffer[response] = 0;
+	cout << "We received the following encrypted message: \n" << buffer << endl;
+	message = util.decryptMess(buffer);
+	cout << "We have confirmed the digital signature and have the following contract:\n" << message << endl;
+	full_signed_message = new char[strlen(message) + strlen(signed_message)];
+	strcpy(full_signed_message, message);
 	strcat(full_signed_message, signed_message);
+	cout << "Signing contract wither server user and date. Here is the final contract: \n" << full_signed_message <<endl;
 	util.writeFile(full_signed_message);
-	//Sign message
-	full_response = new char[strlen(full_signed_message) + strlen(message)];
+	delete[] message;
+	cout << "Encrypting contract with server private and customer public key..." << endl;
+	message = util.encryptMess(full_signed_message);
+	cout << "Sending encrypted contract ... " << endl;
 
-	// Build response
-	strcpy(full_response, message);
-	strcat(full_response, full_signed_message);
+
+
+	//Sign message
+//	full_response = new char[strlen(full_signed_message) + strlen(message)];
+//
+//	// Build response
+//	strcpy(full_response, message);
+//	strcat(full_response, full_signed_message);
 	// send confirmation
-	response = sendto(listenfd, full_response, strlen(full_response), 0,
+	response = sendto(listenfd, message, strlen(message), 0,
 			(struct sockaddr*) &cliaddr, sizeof(cliaddr));
 	if (response == -1) {
 		cout << "There was an issue sending the message back to the client" << endl;
@@ -262,8 +274,11 @@ int Server::runServer() {
 
 	util.printKeys();
 //	//receive messages
-	//response = exchangeMessages(listenfd, cliaddr, len);
-
+	response = exchangeMessages(listenfd, cliaddr, len);
+	if (response == -1) {
+		cout << "Error sending the message. Check logs" << endl;
+		return -1;
+	}
 
 
 	return 0;

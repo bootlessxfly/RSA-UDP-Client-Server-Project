@@ -30,6 +30,7 @@ public:
 	bool checkSameKey();
 
 	char* encryptMess(char* mess);
+	char*decryptMess(char* cipher);
 
 	void printKeys();
 

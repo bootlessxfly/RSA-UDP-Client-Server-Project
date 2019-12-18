@@ -96,21 +96,21 @@ void Key::buildKey() {
 
 int Key::findPublicExponent(int z, int n) {
 	// The possible choices to start e from are the 1st 4 ferment numbers
-	int exponents[5] = {3, 5, 17, 257, 655537};
-	int rando = rand() % 5 + 0;
-	int forceIterator = rand() % 2 + 0;
-	int e = exponents[rando];
-	if (forceIterator > 0) {
-		// adds even more randomness
-		e++;
-	}
-	if (e > z) {
-		while (e > z) {
-			rando = rand() % 4 + 0;
-			e = exponents[rando];
-		}
-	}
-//	int e = 2;
+//	int exponents[5] = {3, 5, 17, 257, 655537};
+//	int rando = rand() % 5 + 0;
+//	int forceIterator = rand() % 2 + 0;
+//	int e = exponents[rando];
+//	if (forceIterator > 0) {
+//		// adds even more randomness
+//		e++;
+//	}
+//	if (e > z) {
+//		while (e > z) {
+//			rando = rand() % 4 + 0;
+//			e = exponents[rando];
+//		}
+//	}
+	int e = 2;
 	int gcd;
 	while (e < z) {
 		gcd = findGCD(e, z);
@@ -270,7 +270,7 @@ void Key::generatePQ() {
 }
 
 int Key::genRanNumPrime() {
-	int upperLimit = 78;
+	int upperLimit = 32;
 	int range = rand() % upperLimit + upperLimit/2;
 	for (int i = 0; i < 0; i++) {
 		range = rand() % range + upperLimit/2;

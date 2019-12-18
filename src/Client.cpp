@@ -46,9 +46,9 @@ void Client::init() {
 //	cout
 //			<< "Please keep record of these values if you would like to able to reuse the values"
 //			<< endl;
-//	cout
-//			<< "Please enter the fileName of the contract you would like to send: ";
-//	cin >> fileName;
+	cout
+			<< "Please enter the fileName of the contract you would like to send: ";
+	cin >> fileName;
 	cout << "Please enter the IP Address of the server: ";
 	cin >> ip_addr;
 	cout << "Please enter the port Number of the server: ";
@@ -205,13 +205,18 @@ int Client::getPublicKeyExchange(int sockfd, socklen_t len, bool regenKey) {
 
 int Client::exchangeMessages(int sockfd, socklen_t len) {
 	char *message = util.openFile();
+
 	int response;
 	 //The buffer size will be the size of the message being sent, plus 200 bytes buffer space for the extra response from the contract server.
-	char buffer[strlen(message) + 200];
 	if (message == NULL) {
 		return -1;
 	}
-	response = sendto(sockfd, message, strlen(message) + 1, 0,
+	cout << "Unsigned contract loaded as: \n" << message << endl;
+	char *cipher = util.encryptMess(message);
+	delete[] message;
+	cout << "Encrypted unsigned contract ... " << endl;
+	char buffer[strlen(cipher) + 1000];
+	response = sendto(sockfd, cipher, strlen(cipher) + 1, 0,
 			(struct sockaddr*) NULL, len);
 	if (response == -1) {
 		cout << "Unable to send message to server" << endl;
@@ -227,7 +232,12 @@ int Client::exchangeMessages(int sockfd, socklen_t len) {
 		return -1;
 	}
 	buffer[response] = 0;
-	puts(buffer);
+
+	cout << "Decrypted Signed contract received as:\n" << buffer << endl;
+	cout << "Decrypting the message with customer private and server  public key ... " << endl;
+	message = util.decryptMess(buffer);
+	cout << "Contract was validated and dencrypted as:\n" << message << endl;
+
 
 	return 0;
 }
@@ -236,7 +246,7 @@ int Client::runClient() {
 
 	cout << "Client started ..." << endl;
 
-//	int response; //response of sending and receiving
+	int response; //response of sending and receiving
 //
 //	int len;
 	//char *message;
@@ -281,10 +291,10 @@ int Client::runClient() {
 
 
 	// Send the message
-//	response = exchangeMessages(sockfd, sizeof(servaddr));
-//	if (response == -1 ) {
-//		cout << "There was an issue exchange messages. Check logs for more more details" << endl;
-//	}
+	response = exchangeMessages(sockfd, sizeof(servaddr));
+	if (response == -1 ) {
+		cout << "There was an issue exchange messages. Check logs for more more details" << endl;
+	}
 	return 0;
 }
 

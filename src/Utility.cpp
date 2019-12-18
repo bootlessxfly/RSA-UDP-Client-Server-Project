@@ -146,3 +146,28 @@ char* Utility::encryptMess(char* mess) {
 	return message;
 }
 
+char* Utility::decryptMess(char* cipher) {
+	char* mess = new char[strlen(cipher)];
+	int count = 0;
+	char* m;
+	size_t current, previous = 0;
+	int n;
+	string key(cipher);
+	current = key.find(delim);
+	while (current != string::npos) {
+		n = stoi(key.substr(previous, current - previous));
+		previous = current + 1;
+		current = key.find(Utility::delim, previous);
+		m = rsa.decrypt(n);
+		if (count == 0) {
+			count++;
+			strcpy(mess, m);
+		}
+		else {
+			strcat(mess,m);
+		}
+		delete[] m;
+	}
+	return mess;
+}
+

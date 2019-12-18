@@ -45,8 +45,14 @@ char* RSA::encrypt(int m) {
 }
 
 char* RSA::decrypt(int c) {
-
-	return 0;
+//	int n = stoi(c);
+	char a = static_cast<char>(decryptInt(c));
+	char b[2];
+	b[0] = a;
+ 	char* m = new char[2];
+	strcpy(m,b);
+	return m;
+	//return 0;
 }
 
 

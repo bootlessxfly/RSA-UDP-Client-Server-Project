@@ -51,10 +51,34 @@ char* Utility::openFile() {
 	return message;
 }
 
-void Utility::writeFile(char *message) {
-	ofstream file(fileName);
-	file.write(message, strlen(message));
-	file.close();
+void Utility::writeFile(char *message, bool isSigned, bool isEncrypted) {
+	char* extraFileName = new char[strlen(fileName) + 11];
+	if (isSigned && !isEncrypted) {
+		//Start message with "signed"
+		strcpy(extraFileName,"signed.");
+		strcat(extraFileName, fileName);
+	}
+	else if (isEncrypted && !isSigned) {
+		strcpy(extraFileName, fileName);
+		strcat(extraFileName, ".enc");
+	}
+	else if (isEncrypted && isSigned) {
+		strcpy(extraFileName,"signed.");
+		strcat(extraFileName, fileName);
+		strcat(extraFileName, ".enc");
+	}
+	if (isSigned || isEncrypted) {
+		ofstream file(extraFileName);
+		file.write(message, strlen(message));
+		file.close();
+	}
+	else {
+		ofstream file(fileName);
+		file.write(message, strlen(message));
+		file.close();
+	}
+	delete[] extraFileName;
+
 
 }
 

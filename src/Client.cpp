@@ -213,6 +213,7 @@ int Client::exchangeMessages(int sockfd, socklen_t len) {
 	}
 	cout << "Unsigned contract loaded as: \n" << message << endl;
 	char *cipher = util.encryptMess(message);
+	util.writeFile(cipher, false, true);
 	delete[] message;
 	cout << "Encrypted unsigned contract ... " << endl;
 	char buffer[strlen(cipher) + 1000];
@@ -234,9 +235,11 @@ int Client::exchangeMessages(int sockfd, socklen_t len) {
 	buffer[response] = 0;
 
 	cout << "Decrypted Signed contract received as:\n" << buffer << endl;
+	util.writeFile(buffer, true, true);
 	cout << "Decrypting the message with customer private and server  public key ... " << endl;
 	message = util.decryptMess(buffer);
 	cout << "Contract was validated and dencrypted as:\n" << message << endl;
+	util.writeFile(message, true, false);
 
 
 	return 0;

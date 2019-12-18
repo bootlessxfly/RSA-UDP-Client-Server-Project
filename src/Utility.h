@@ -19,7 +19,7 @@ public:
 	Utility(char *inFileName, int p, int q);
 	virtual ~Utility();
 	char* openFile();
-	void writeFile(char *message);
+	void writeFile(char *message, bool isSigned, bool isEncrypted);
 	char* genTestMessage();
 	bool valTestMessage(char* mess);
 	void addOtherPubKeyToRSA(char* key);

@@ -209,14 +209,16 @@ int Server::exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t
 	cout << "We received the following encrypted message: \n" << buffer << endl;
 	message = util.decryptMess(buffer);
 	cout << "We have confirmed the digital signature and have the following contract:\n" << message << endl;
+	util.writeFile(message, false, false);
 	full_signed_message = new char[strlen(message) + strlen(signed_message)];
 	strcpy(full_signed_message, message);
 	strcat(full_signed_message, signed_message);
 	cout << "Signing contract wither server user and date. Here is the final contract: \n" << full_signed_message <<endl;
-	util.writeFile(full_signed_message);
+	util.writeFile(full_signed_message, true, false);
 	delete[] message;
 	cout << "Encrypting contract with server private and customer public key..." << endl;
 	message = util.encryptMess(full_signed_message);
+	util.writeFile(message, true, true);
 	cout << "Sending encrypted contract ... " << endl;
 
 

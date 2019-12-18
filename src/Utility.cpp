@@ -39,7 +39,7 @@ char* Utility::openFile() {
 	char *message;
 	string line;
 	string lineBuffer = "";
-	ifstream f(fileName);
+	ifstream f(filePathName);
 	if (!f.is_open()) {
 		cout << "The file: " << fileName << " can not be opened" << endl;
 		return NULL; //returns null if file can not be opened.
@@ -50,7 +50,7 @@ char* Utility::openFile() {
 
 	message = new char[lineBuffer.size() + 1];
 	strcpy(message, lineBuffer.c_str());
-
+	delete[] filePathName;
 	return message;
 }
 

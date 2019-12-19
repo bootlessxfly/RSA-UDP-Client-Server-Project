@@ -35,7 +35,6 @@ Key::Key(int inN, int inE, int inD) {
 
 	isKeyCorrect = validateKey(n, e, d);
 	if (!isKeyCorrect) {
-//		cout << "The keys you provided where no good. No worries, I got a solution..." << endl;
 		while(!isKeyCorrect) {
 			generatePQ();
 			buildKey();
@@ -50,10 +49,7 @@ Key::Key(int inP, int inQ) {
 	p = inP;
 	q = inQ;
 	buildKey();
-	if (!isKeyCorrect) {
-//		cout << "Looks like your key is no good. Let me generate you the perfect set of keys. This could take quite some time ... " << endl;
-	}
-	else {
+	if (isKeyCorrect) {
 		cout << "Great!! You provided me with a valid p and q" << endl;
 	}
 	while (!isKeyCorrect) {
@@ -72,7 +68,6 @@ Key::~Key() {
 }
 
 void Key::buildKey() {
-	//srand(time(NULL));
 	if (p == 0 || q == 0) {
 		return;
 	}
@@ -83,22 +78,19 @@ void Key::buildKey() {
 	}
 
 	e = findPublicExponent(z, n);
+	if (e == -1) {
+		return;
+	}
 	d = findPrivateExponent(z, e);
 
 	isKeyCorrect = validateKey(n, e, d);
-//	if (isKeyCorrect) {
-//		cout << "The value used for p: " << p << endl;
-//		cout << "The value used for q: " << q << endl;
-//		cout << "The private key is: " << getPrivateKeyString() << endl;
-//		cout << "The public key e generated is: " << getPublicKeyString() << endl;
-//	}
 }
 
 int Key::findPublicExponent(int z, int n) {
 	// The possible choices to start e from are the 1st 4 ferment numbers
 	int exponents[5] = {3, 5, 17, 257, 655537};
-	int rando = rand() % 4 + 0;
-	int forceIterator = rand() % 2 + 0;
+	int rando = rand() % 5;
+	int forceIterator = rand() % 2;
 	int e = exponents[rando];
 	if (forceIterator > 0) {
 		// adds even more randomness
@@ -106,7 +98,7 @@ int Key::findPublicExponent(int z, int n) {
 	}
 	if (e > z) {
 		while (e > z) {
-			rando = rand() % 3 + 0;
+			rando = rand() % 4;
 			e = exponents[rando];
 		}
 	}
@@ -120,11 +112,8 @@ int Key::findPublicExponent(int z, int n) {
 			e++;
 		}
 	}
-	// If for whatever reason, we have not found e, we will recursively call this
-	// Or should I call buildKey and genPQ again?
-	//findPublicExponent(z, n);
-	generatePQ();
-	buildKey();
+//	generatePQ();
+//	buildKey();
 	return -1;
 }
 
@@ -149,18 +138,9 @@ int Key::findGCD(int e, int z) {
 
 int Key::findPrivateExponent(int z, int e) {
 	int d = 0;
-	//int d = 0;
-	while (true) {
-		if ((fmod(e * d, z) == 1)) {
-			return d;
-		}
-		d++;
-	}
-	d = (1 + (3*z))/e;
-	cout << d << endl;
+	int k = rand() % 5 + 1;
+	d = (1 + (k*z))/e;
 	return d;
-
-	//return -1;
 }
 
 void Key::setPublicKeyFromString(char *pubKey) {
@@ -191,8 +171,8 @@ char* Key::getPublicKeyString() {
 	strcpy(pubKey, nStr);
 	strcat(pubKey, pubKeyForm);
 	strcat(pubKey, eStr);
-//	delete nStr;
-//	delete eStr;
+	delete nStr;
+	delete eStr;
 	return pubKey;
 }
 
@@ -270,12 +250,8 @@ void Key::generatePQ() {
 }
 
 int Key::genRanNumPrime() {
-	int upperLimit = 128;
-//	int range = rand() % upperLimit + upperLimit/2;
-//	for (int i = 0; i < 0; i++) {
-//		range = rand() % range + upperLimit/2;
-//	}
-	int num = rand() % upperLimit + 0;
+	int upperLimit = 128 + 1;
+	int num = rand() % upperLimit + 2;
 	int m = num / 2;
 	for (int i = 2; i < m;i++) {
 		if (num % i == 0) {

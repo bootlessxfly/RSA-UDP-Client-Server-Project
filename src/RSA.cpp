@@ -116,11 +116,9 @@ void RSA::addServerPubKey(char *pubKey) {
 
 bool RSA::testASCIIEncDec(RSA rsa, RSA rsa1) {
 	if (testASCII(rsa, rsa1)) {
-//		cout << "PASSED!!" << endl;
 		return true;
 	}
 	else {
-//		cout << "FAIL!!" << endl;
 		return false;
 	}
 }
@@ -131,11 +129,9 @@ bool RSA::testASCII(RSA rsa, RSA rsa1) {
 		int m = rsa.testE(i);
 		int n = rsa1.testD(m);
 		if (i == n) {
-//			cout << i << " has passed" << endl;
 		}
 		else {
 			passed = false;
-//			cout << i << " has FAILED" << endl;
 		}
 	}
 
@@ -143,11 +139,9 @@ bool RSA::testASCII(RSA rsa, RSA rsa1) {
 		int m = rsa1.testE(i);
 		int n = rsa.testD(m);
 		if (i == n) {
-//			cout << i << " reversed has passed" << endl;
 		}
 		else {
 			passed = false;
-//			cout << i << " reversed FAILED" << endl;
 		}
 	}
 	return passed;

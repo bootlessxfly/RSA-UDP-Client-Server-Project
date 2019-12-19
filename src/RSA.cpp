@@ -75,16 +75,12 @@ void RSA::printKeysAndPQ() {
 
 int RSA::testE(int m) {
 	int test = m;
-//	cout << "Initial Message: " << test << endl;
 	test = encryptInt(test);
-//	cout << "Generated Cipher is: " << test << endl;
 	return test;
 }
 
 int RSA::testD(int m) {
-//	cout << "Cipher is: " << m << endl;
 	int n = decryptInt(m);
-//	cout << "Message is: " << n << endl;
 	return n;
 }
 

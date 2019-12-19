@@ -37,15 +37,6 @@ void Client::init() {
 	cout
 			<< "\n\nThe client application is starting, please follow on screen prompt"
 			<< endl;
-	cout << "Please enter the information for generating the key pair below: "
-			<< endl;
-//	cout << "Enter p: ";
-//	cin >> p;
-//	cout << "Enter q: ";
-//	cin >> q;
-//	cout
-//			<< "Please keep record of these values if you would like to able to reuse the values"
-//			<< endl;
 	cout
 			<< "Please enter the fileName of the contract you would like to send: ";
 	cin >> fileName;
@@ -66,17 +57,6 @@ void Client::init() {
 				<< "Something went wrong in the communication with server, check log to determine where the issue occured"
 				<< endl;
 	}
-}
-
-bool Client::fullKeyGeneration(int sockfd, socklen_t len) {
-
-//	if (validateKeys(sockfd, len)) {
-//		return true;
-//	}
-//	else {
-//		return false;
-//	}
-	return false;;
 }
 
 bool Client::validateKeys(int sockfd, socklen_t len) {
@@ -103,13 +83,11 @@ bool Client::validateKeys(int sockfd, socklen_t len) {
 	testMess[response] = 0;
 
 	if (strcmp(testMess, util.badKey) == 0) {
-//		cout << "Other side has a bad key!!" << endl;
 		getPublicKeyExchange(sockfd, len, true);
 		return false;
 	}
 
 	if (util.valTestMessage(testMess)) {
-//		cout << "!!! WE PASS !!!" << endl;
 		if (testMess[strlen(testMess) - 1] == ':') {
 			if (util.checkSameKey()) {
 				response = sendto(sockfd, util.badKey, strlen(util.badKey), 0,
@@ -136,7 +114,6 @@ bool Client::validateKeys(int sockfd, socklen_t len) {
 		isCorrect = true;
 	}
 	else {
-//		cout << "!!! WE FAIL !!!" << endl;
 		response = sendto(sockfd, util.badKey, strlen(util.badKey), 0,
 				(struct sockaddr*) NULL, len);
 		if (response == -1) {
@@ -153,7 +130,6 @@ bool Client::validateKeys(int sockfd, socklen_t len) {
 
 
 		getPublicKeyExchange(sockfd, len, true);
-		//return validateKeys(sockfd, len);
 		return isCorrect;
 	}
 
@@ -179,7 +155,6 @@ int Client::getPublicKeyExchange(int sockfd, socklen_t len, bool regenKey) {
 			cout << "Unable to send publicKey to server to server" << endl;
 			exit(-1);
 		}
-//		cout << "Public key was sent to the server, waiting for server's public key..." << endl;
 		// Will reuse this variable to receive the servers public key
 		pubKey = new char[sizeof(char) + 2*sizeof(int)];
 		// The key is format is size int + char + int
@@ -197,8 +172,6 @@ int Client::getPublicKeyExchange(int sockfd, socklen_t len, bool regenKey) {
 			cout << "There was an issue storing the public key. If the public key was not sent in a bad format, this is a bug." << endl;
 			exit(-1);
 		}
-
-//		cout << "Public key received and stored. Public key is: " << pubKey << endl;
 
 		return 0;
 }
@@ -250,9 +223,6 @@ int Client::runClient() {
 	cout << "Client started ..." << endl;
 
 	int response; //response of sending and receiving
-//
-//	int len;
-	//char *message;
 
 	bool isGenerated = false;
 

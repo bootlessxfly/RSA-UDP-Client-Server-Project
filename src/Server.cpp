@@ -34,12 +34,6 @@ Server::~Server() {
 
 void Server::init() {
 	cout << "Starting the server side application" << endl;
-//	cout << "Please enter the information for generating the key pair below: "
-//			<< endl;
-//	cout << "Enter p: ";
-//	cin >> p;
-//	cout << "Enter q: ";
-//	cin >> q;
 	cout
 			<< "Please keep record of these values if you would like to able to reuse the values"
 			<< endl;
@@ -64,19 +58,6 @@ void Server::init() {
 
 }
 
-bool Server::fullKeyGeneration(int listenfd, struct sockaddr_in cliaddr, socklen_t len) {
-
-//	if (validateKeys(listenfd, cliaddr, len)) {
-//		return true;
-//	}
-//	else {
-//		return false;
-//	}
-
-	return false;
-
-}
-
 bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t len) {
 	bool otherPassed = false;
 	bool isCorrect = false;
@@ -86,19 +67,16 @@ bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t le
 			(struct sockaddr*) &cliaddr, &len); //receive message from client
 	testMess[response] = 0;
 
-//	cout << "Test mess is: " << testMess << endl;
 
 
 
 
 
 	if (util.valTestMessage(testMess)) {
-//		cout << "!!! WE PASSED !!!" << endl;
 		//return true;
 		isCorrect = true;
 	}
 	else {
-//		cout << "!!! WE FAIL !!!" << endl;
 		response = sendto(listenfd, util.badKey, strlen(util.badKey), 0,
 				(struct sockaddr*) &cliaddr, sizeof(cliaddr));
 		response = getPublicKeyExchange(listenfd, cliaddr, len, true);
@@ -128,7 +106,6 @@ bool Server::validateKeys(int listenfd, struct sockaddr_in cliaddr, socklen_t le
 	testMess[response] = 0;
 
 	if (strcmp(testMess, util.badKey) == 0) {
-//		cout << "Otherside has a bad key" << endl;
 		util = Utility(fileName, 0, 0);
 		response = sendto(listenfd, util.badKey, strlen(util.badKey), 0,
 				(struct sockaddr*) &cliaddr, sizeof(cliaddr));
@@ -172,7 +149,6 @@ int Server::getPublicKeyExchange(int listenfd, struct sockaddr_in cliaddr, sockl
 		cout << "There was an issue storing the public key. If the public key was not sent in a bad format, this is a bug." << endl;
 		return -1;
 	}
-//	cout << "The public key was retrieved and save for the client: " << pubKey << endl;
 	//send public key
 	pubKey = util.getPubKeyString();
 	response = sendto(listenfd, pubKey, strlen(pubKey), 0,
@@ -181,14 +157,11 @@ int Server::getPublicKeyExchange(int listenfd, struct sockaddr_in cliaddr, sockl
 		cout << "There was an issue sending the public key back to the client" << endl;
 		return -1;
 	}
-//	cout << "The Public key was sent to the client" << endl;
 	return 0;
 }
 
 int Server::exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t len) {
 	int response;
-//	const char *message =
-//			"Hello Client, message received. Here is my singed message: \n";
 	const char *signed_message = " Signed Bob(Seller) Date: November 24, 2019.";
 	char *full_signed_message;
 	char *full_response;
@@ -224,11 +197,6 @@ int Server::exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t
 
 
 	//Sign message
-//	full_response = new char[strlen(full_signed_message) + strlen(message)];
-//
-//	// Build response
-//	strcpy(full_response, message);
-//	strcat(full_response, full_signed_message);
 	// send confirmation
 	response = sendto(listenfd, message, strlen(message), 0,
 			(struct sockaddr*) &cliaddr, sizeof(cliaddr));
@@ -263,7 +231,6 @@ int Server::runServer() {
 
 	//receive public key
 	len = sizeof(cliaddr);
-	// the size of the public key is 2*int + char. int,int
 
 	bool isGenerated = false;
 

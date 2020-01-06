@@ -1,9 +1,11 @@
-/*
- * key.cpp
- *
- *  Created on: Dec 14, 2019
- *      Author: chwhite
- */
+//============================================================================
+// Name        : Key.cpp
+// Author      : Christoph White
+// Version     :
+// Copyright   : This was written for Comp6376 at Auburn. This should not be reused for this class
+// Do not reuse this without reaching out to me first.
+// Description : Refer to the doc in github for documentation
+//=================
 
 #include "Key.h"
 
@@ -250,7 +252,7 @@ void Key::generatePQ() {
 }
 
 int Key::genRanNumPrime() {
-	int upperLimit = 128 + 1;
+	int upperLimit = 512 + 1;
 	int num = rand() % upperLimit + 2;
 	int m = num / 2;
 	for (int i = 2; i < m;i++) {

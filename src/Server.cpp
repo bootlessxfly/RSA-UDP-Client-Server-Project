@@ -1,9 +1,10 @@
-/*
- * Server.cpp
- *
- *  Created on: Dec 5, 2019
- *      Author: chwhite
- */
+//============================================================================
+// Name        : Server.cpp
+// Author      : Christoph White
+// Version     :
+// Copyright   : This was written for Comp6376 at Auburn. This should not be reused for this class
+// Description : Refer to the doc in github for documentation
+//=================
 
 #include "Server.h"
 #include "Utility.h"
@@ -164,7 +165,6 @@ int Server::exchangeMessages(int listenfd, struct sockaddr_in cliaddr, socklen_t
 	int response;
 	const char *signed_message = " Signed Bob(Seller) Date: November 24, 2019.";
 	char *full_signed_message;
-	char *full_response;
 	char* message;
 
 	char buffer[10000];

@@ -1,9 +1,11 @@
-/*
- * Server.h
- *
- *  Created on: Dec 5, 2019
- *      Author: chwhite
- */
+//============================================================================
+// Name        : Server.h
+// Author      : Christoph White
+// Version     :
+// Copyright   : This was written for Comp6376 at Auburn. This should not be reused for this class
+// Do not reuse this without reaching out to me first.
+// Description : Refer to the doc in github for documentation
+//=================
 
 #include "Utility.h"
 #include <sys/socket.h>

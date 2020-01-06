@@ -23,5 +23,8 @@ C_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Debug.bak/project_6370/src \
+Debug.bak/src \
+Debug.bak/src.bak \
 src \
 

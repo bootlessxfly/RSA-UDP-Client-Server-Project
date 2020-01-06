@@ -3,7 +3,8 @@
 // Author      : Christoph White
 // Version     :
 // Copyright   : This was written for Comp6376 at Auburn. This should not be reused for this class
-// Description : Hello World in C++, Ansi-style
+// Do not reuse this without reaching out to me first.
+// Description : Refer to the github document for comments and documentation on implementation
 //============================================================================
 
 #include "Server.h"
@@ -54,23 +55,12 @@ void interface() {
 }
 
 void test() {
-
-	// This ar valid values
-	//RSA rsa = RSA(46,67);
-	//RSA rsa1 = RSA(89,91);
-
-//	RSA rsa = RSA(4,67);
-//	RSA rsa1 = RSA(89,91);
-
-
 	bool pass = false;
 	RSA rsa;
 	RSA rsa1;
 	cout << "!!!Generating Perfect Match!!! ... Could take a while" << endl;
 	while (!pass) {
 
-//		RSA rsa = RSA(151,3);
-//		RSA rsa1 = RSA(5,91);
 		rsa = RSA(0,0);
 		rsa1 = RSA(0,0);
 		rsa.addServerPubKey(rsa1.getPublicKeyString());
